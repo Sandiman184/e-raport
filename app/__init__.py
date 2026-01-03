@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from config import config
-from .core.extensions import init_extensions
+from .core.extensions import init_extensions, db
 
 def create_app(config_name='default'):
     app = Flask(__name__, 
@@ -13,6 +13,23 @@ def create_app(config_name='default'):
     register_blueprints(app)
     register_error_handlers(app)
     
+    # Auto-Create DB & Admin if not exists (Critical for Vercel/First Run)
+    with app.app_context():
+        try:
+            db.create_all()
+            
+            # Check and Create Admin User
+            from app.models.user import User
+            if not User.query.first():
+                print("⚠️ No users found. Creating default admin...")
+                admin = User(username='admin', email='admin@sekolah.id', role='admin')
+                admin.set_password('admin123')
+                db.session.add(admin)
+                db.session.commit()
+                print("✅ Default admin created: user='admin', pass='admin123'")
+        except Exception as e:
+            print(f"❌ Database initialization error: {e}")
+
     # Inject Settings function to all templates
     @app.context_processor
     def inject_settings():
