@@ -61,9 +61,9 @@
             <div class="pt-5 pb-2 pl-3 text-xs font-bold text-teal-400 uppercase tracking-wider">Akademik</div>
 
             <a href="{{ url_for('students.index') }}"
-                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint.startswith('students') else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint and request.endpoint.startswith('students') else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
                 <i data-lucide="users"
-                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint.startswith('students') else 'text-teal-300 group-hover:text-white' }}"></i>
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint and request.endpoint.startswith('students') else 'text-teal-300 group-hover:text-white' }}"></i>
                 Data Santri
             </a>
             <a href="{{ url_for('grades.index') }}"
@@ -82,9 +82,9 @@
             <div class="pt-5 pb-2 pl-3 text-xs font-bold text-teal-400 uppercase tracking-wider">Laporan</div>
 
             <a href="{{ url_for('reports.index') }}"
-                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint.startswith('reports') else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint and request.endpoint.startswith('reports') else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
                 <i data-lucide="printer"
-                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint.startswith('reports') else 'text-teal-300 group-hover:text-white' }}"></i>
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint and request.endpoint.startswith('reports') else 'text-teal-300 group-hover:text-white' }}"></i>
                 Cetak Raport
             </a>
 

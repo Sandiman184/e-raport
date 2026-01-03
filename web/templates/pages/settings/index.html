@@ -4,12 +4,17 @@
 {% block title %}Pengaturan Sistem{% endblock %}
 
 {% block content %}
-<form method="post">
+<!-- Hidden Main Form for Settings -->
+<form id="settings-form" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
 
+<div class="space-y-8">
+    
+    <!-- GRID UTAMA: Identitas & Konfigurasi -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        <!-- KOLOM KIRI: Identitas Sekolah -->
+        <!-- KOLOM KIRI: Identitas Sekolah (2/3 width) -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Card Sekolah -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -26,28 +31,28 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lembaga / Sekolah</label>
-                        <input type="text" name="school_name"
+                        <input type="text" name="school_name" form="settings-form"
                             value="{{ Setting.get_value('school_name', 'Madrasah Diniyah Takmiliyah Al Barokah') }}"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition shadow-sm bg-white">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm bg-gray-50 focus:bg-white">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">NSDT / Statistik</label>
-                            <input type="text" name="school_nsdt"
+                            <input type="text" name="school_nsdt" form="settings-form"
                                 value="{{ Setting.get_value('school_nsdt', '411.2.32.06.0125') }}"
-                                class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition shadow-sm bg-white">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm bg-gray-50 focus:bg-white">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Kecamatan & Kab.</label>
-                            <input type="text" name="school_district_city"
+                            <input type="text" name="school_district_city" form="settings-form"
                                 value="{{ Setting.get_value('school_district_city', 'Cisayong - Tasikmalaya') }}"
-                                class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition shadow-sm bg-white">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm bg-gray-50 focus:bg-white">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat Lengkap</label>
-                        <textarea name="school_address" rows="2"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition shadow-sm bg-white">{{ Setting.get_value('school_address', 'Kp. Cikadu Desa Cikadu Kec. Cisayong Kab. Tasikmalaya') }}</textarea>
+                        <textarea name="school_address" rows="2" form="settings-form"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm bg-gray-50 focus:bg-white">{{ Setting.get_value('school_address', 'Kp. Cikadu Desa Cikadu Kec. Cisayong Kab. Tasikmalaya') }}</textarea>
                     </div>
                 </div>
             </div>
@@ -64,29 +69,29 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-4">
-                    <div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Kepala Madrasah</label>
                         <div class="relative">
                             <i data-lucide="user" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
-                            <input type="text" name="headmaster_name"
+                            <input type="text" name="headmaster_name" form="settings-form"
                                 value="{{ Setting.get_value('headmaster_name', 'UST. SARIPUDIN, S.Pd.I') }}"
-                                class="pl-10 w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 transition shadow-sm font-medium bg-white">
+                                class="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition shadow-sm font-medium bg-gray-50 focus:bg-white">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">NIP / NIY (Opsional)</label>
-                        <input type="text" name="headmaster_nip" value="{{ Setting.get_value('headmaster_nip', '') }}"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 transition shadow-sm bg-white"
+                        <input type="text" name="headmaster_nip" form="settings-form" value="{{ Setting.get_value('headmaster_nip', '') }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition shadow-sm bg-gray-50 focus:bg-white"
                             placeholder="-">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- KOLOM KANAN: Konfigurasi Raport -->
+        <!-- KOLOM KANAN: Konfigurasi Raport (1/3 width) -->
         <div class="lg:col-span-1 space-y-6">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 h-full flex flex-col">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col h-full">
                 <div class="flex items-center mb-6 border-b pb-3 border-gray-100">
                     <div class="p-2 bg-blue-50 rounded-lg text-blue-600 mr-3">
                         <i data-lucide="calendar" class="w-6 h-6"></i>
@@ -99,47 +104,231 @@
 
                 <div class="space-y-5 flex-1">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tahun Ajaran</label>
-                        <select name="academic_year"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm bg-white">
-                            <option value="2023 / 2024">2023 / 2024</option>
-                            <option value="2024 / 2025" selected>2024 / 2025</option>
-                            <option value="2025 / 2026">2025 / 2026</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kelas Default (Kop)</label>
-                        <input type="text" name="class_name_default"
-                            value="{{ Setting.get_value('class_name_default', 'AWALIYAH 1') }}"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm uppercase bg-white">
-                    </div>
-
-                    <div class="pt-4 border-t border-dashed">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tempat Titi Mangsa</label>
-                        <input type="text" name="report_place"
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Titi Mangsa Raport</label>
+                        <input type="text" name="report_place" form="settings-form"
                             value="{{ Setting.get_value('report_place', 'Tasikmalaya') }}"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm bg-white">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-gray-50 focus:bg-white"
+                            placeholder="Contoh: Tasikmalaya">
                     </div>
-
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Titi Mangsa</label>
-                        <input type="text" name="report_date"
-                            value="{{ Setting.get_value('report_date', '...................... 2025') }}"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm bg-white"
-                            placeholder="20 Juni 2025">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Raport</label>
+                        <input type="date" name="report_date" form="settings-form" value="{{ Setting.get_value('report_date', '') }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-gray-50 focus:bg-white">
                     </div>
-                </div>
-
-                <div class="mt-8 pt-6 border-t border-gray-100">
-                    <button type="submit"
-                        class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg font-bold shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 flex justify-center items-center gap-2">
-                        <i data-lucide="save" class="w-5 h-5"></i>
-                        Simpan Perubahan
-                    </button>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tahun Ajaran Aktif</label>
+                        <input type="text" name="academic_year" form="settings-form"
+                            value="{{ Setting.get_value('academic_year', '2024/2025') }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-gray-50 focus:bg-white"
+                            placeholder="Contoh: 2024/2025">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kelas Default</label>
+                        <input type="text" name="class_name_default" form="settings-form"
+                            value="{{ Setting.get_value('class_name_default', '1 A') }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-gray-50 focus:bg-white"
+                            placeholder="Contoh: 1 A">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</form>
+
+    <!-- BUTTON SAVE SETTINGS (Floating or Static) -->
+    <div class="flex justify-end pt-4 border-t border-gray-200">
+        <button type="submit" name="action" value="save" form="settings-form"
+            class="flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-base font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all transform hover:scale-105 active:scale-95">
+            <i data-lucide="save" class="w-5 h-5 mr-2"></i>
+            Simpan Pengaturan
+        </button>
+    </div>
+
+    <!-- DATABASE & MAINTENANCE SECTION -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        
+        <!-- CARD: Database Management -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center mb-6 border-b pb-3 border-gray-100 justify-between">
+                <div class="flex items-center">
+                    <div class="p-2 bg-orange-50 rounded-lg text-orange-600 mr-3">
+                        <i data-lucide="database" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Database Manager</h3>
+                        <p class="text-sm text-gray-500">Backup & Restore Data</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Create Backup -->
+                <div class="bg-orange-50/50 p-4 rounded-lg border border-orange-100">
+                    <form method="post" class="space-y-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <label class="block text-sm font-medium text-gray-800">Buat Backup Baru</label>
+                        <div class="flex gap-2">
+                            <input type="text" name="backup_desc" placeholder="Catatan (opsional)..."
+                                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 bg-white">
+                            <button type="submit" name="action" value="backup"
+                                class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 text-sm font-medium whitespace-nowrap flex items-center shadow-sm">
+                                <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Backup
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Import / Restore Database -->
+                <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100">
+                    <form method="post" enctype="multipart/form-data" class="space-y-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <label class="block text-sm font-medium text-gray-800">Import / Restore Database</label>
+                        <div class="flex gap-2 items-center">
+                            <input type="file" name="backup_file" accept=".sqlite" required
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 bg-white border border-gray-200 rounded-lg cursor-pointer">
+                            <button type="submit" name="action" value="restore"
+                                class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 whitespace-nowrap flex items-center shadow-sm"
+                                onclick="return confirm('PERINGATAN KRITIS:\n\nDatabase saat ini akan DITIMPA sepenuhnya oleh file yang diupload.\nSistem akan otomatis membuat backup sebelum proses ini.\n\nApakah Anda yakin ingin melanjutkan?');">
+                                <i data-lucide="upload-cloud" class="w-4 h-4 mr-2"></i> Import
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">*Format file wajib .sqlite. Backup otomatis akan dibuat sebelum restore.</p>
+                    </form>
+                </div>
+
+                <!-- List Backups Table -->
+                <div>
+                    <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i data-lucide="history" class="w-4 h-4 text-gray-500"></i> Riwayat Backup Server
+                    </h4>
+                    <div class="max-h-80 overflow-y-auto border border-gray-200 rounded-lg bg-white shadow-inner">
+                        {% if backups %}
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50 sticky top-0 z-10">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama File</th>
+                                    <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ukuran</th>
+                                    <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                {% for backup in backups %}
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900 truncate max-w-[180px]" title="{{ backup.filename }}">
+                                            {{ backup.filename }}
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            {{ backup.created_at.strftime('%d %b %Y %H:%M') }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm text-gray-500">
+                                        {{ (backup.size / 1024)|round(1) }} KB
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
+                                        <div class="flex items-center justify-center gap-1">
+                                            <!-- Download -->
+                                            <form method="post" class="inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <input type="hidden" name="filename" value="{{ backup.filename }}">
+                                                <button type="submit" name="action" value="download_backup" title="Download ke Komputer"
+                                                    class="p-1.5 text-blue-600 hover:bg-blue-100 rounded-md transition">
+                                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                                </button>
+                                            </form>
+                                            <!-- Restore -->
+                                            <form method="post" class="inline" onsubmit="return confirm('Restore database menggunakan file ini?\n\n{{ backup.filename }}\n\nData saat ini akan ditimpa.');">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <input type="hidden" name="filename" value="{{ backup.filename }}">
+                                                <button type="submit" name="action" value="restore_local" title="Restore Data"
+                                                    class="p-1.5 text-green-600 hover:bg-green-100 rounded-md transition">
+                                                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                                </button>
+                                            </form>
+                                            <!-- Delete -->
+                                            <form method="post" class="inline" onsubmit="return confirm('Hapus file backup ini secara permanen?\n\n{{ backup.filename }}');">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <input type="hidden" name="filename" value="{{ backup.filename }}">
+                                                <button type="submit" name="action" value="delete_backup" title="Hapus File"
+                                                    class="p-1.5 text-red-600 hover:bg-red-100 rounded-md transition">
+                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="flex flex-col items-center justify-center py-8 text-gray-500">
+                            <i data-lucide="database" class="w-8 h-8 mb-2 text-gray-300"></i>
+                            <p class="text-sm">Belum ada file backup tersimpan.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD: Zone Bahaya & Maintenance -->
+        <div class="bg-red-50 rounded-xl shadow-sm border border-red-100 p-6 h-fit">
+            <div class="flex items-center mb-6 border-b border-red-200 pb-3">
+                <div class="p-2 bg-red-100 rounded-lg text-red-600 mr-3">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">Zone Bahaya</h3>
+                    <p class="text-sm text-red-500 font-medium">Tindakan ini tidak dapat dibatalkan</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Prune Data -->
+                <div class="bg-white p-5 rounded-lg border border-red-100 shadow-sm">
+                    <h4 class="text-md font-bold text-gray-800 mb-2">Hapus Data Tahunan (Prune)</h4>
+                    <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+                        Fitur ini akan menghapus seluruh data <strong>Nilai Santri</strong> dan <strong>Laporan</strong> untuk tahun ajaran yang dipilih. 
+                        Data Profil Santri tidak akan dihapus.
+                    </p>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4">
+                        <p class="text-xs text-yellow-700">
+                            <strong>Note:</strong> Sistem akan otomatis membuat backup database sebelum penghapusan dimulai.
+                        </p>
+                    </div>
+                    
+                    <form method="post" class="space-y-3" onsubmit="return confirm('PERINGATAN TERAKHIR:\n\nAnda akan menghapus data nilai untuk tahun ajaran yang dipilih.\nTindakan ini bersifat permanen (kecuali restore backup).\n\nKetik YES di kotak konfirmasi untuk melanjutkan.');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase">1. Pilih Tahun Ajaran</label>
+                            <select name="prune_year" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-red-500 focus:border-red-500">
+                                <option value="">-- Pilih Tahun --</option>
+                                {% if years %}
+                                    {% for y in years %}
+                                        <option value="{{ y }}">{{ y }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="2023/2024">2023/2024</option>
+                                    <option value="2024/2025">2024/2025</option>
+                                    <option value="2025/2026">2025/2026</option>
+                                {% endif %}
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase">2. Konfirmasi Keamanan</label>
+                            <input type="text" name="confirm_prune" placeholder="Ketik 'YES' untuk konfirmasi" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-red-500 focus:border-red-500">
+                        </div>
+                        
+                        <button type="submit" name="action" value="prune"
+                            class="w-full mt-2 px-4 py-2.5 bg-red-600 text-white text-sm font-bold rounded-lg hover:bg-red-700 transition shadow-md flex justify-center items-center">
+                            <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i> Eksekusi Penghapusan Data
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
