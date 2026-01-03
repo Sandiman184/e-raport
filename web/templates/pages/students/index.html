@@ -1,0 +1,132 @@
+{% extends "layouts/base.html" %}
+
+{% block title_icon %}<i data-lucide="users"></i>{% endblock %}
+{% block title %}Data Santri{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
+    <!-- Table Header -->
+    <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-white">
+        <div>
+            <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                Daftar Santri Aktif
+                <span class="px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 text-xs font-extra-bold">{{
+                    students.total }}</span>
+            </h2>
+            <p class="text-sm text-gray-500 mt-1">Kelola data induk santri MDT Al Barokah.</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="{{ url_for('students.add') }}"
+                class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold flex items-center transition shadow-md hover:shadow-lg gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Santri
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Content -->
+    <div class="overflow-x-auto min-h-[400px]">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-50/50 sticky top-0 z-10 border-b border-gray-200">
+                <tr>
+                    <th
+                        class="px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs border-r border-gray-100 w-16 text-center">
+                        No</th>
+                    <th
+                        class="px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs border-r border-gray-100 w-32">
+                        NISM / NIS</th>
+                    <th
+                        class="px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs border-r border-gray-100">
+                        Nama Lengkap</th>
+                    <th
+                        class="px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs border-r border-gray-100 w-24 text-center">
+                        L/P</th>
+                    <th
+                        class="px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs border-r border-gray-100 w-32 text-center">
+                        Status</th>
+                    <th class="px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs text-right w-32">Aksi
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700 divide-y divide-gray-100 bg-white">
+                {% for student in students.items %}
+                <tr class="hover:bg-teal-50/40 transition duration-150 group">
+                    <td class="px-6 py-4 text-sm text-center text-gray-500 font-medium">{{ loop.index + ((students.page
+                        - 1) * students.per_page) }}</td>
+                    <td class="px-6 py-4 text-sm font-mono text-teal-700 bg-gray-50/30 font-semibold">{{ student.nis }}
+                    </td>
+                    <td class="px-6 py-4 text-sm font-semibold text-gray-800 group-hover:text-teal-800">{{ student.name
+                        }}</td>
+                    <td class="px-6 py-4 text-sm text-center">
+                        <span
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold {{ 'bg-blue-100 text-blue-700' if student.gender == 'L' else 'bg-pink-100 text-pink-700' }}">
+                            {{ student.gender }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span
+                            class="px-3 py-1 text-xs font-bold rounded-full border {{ 'bg-emerald-50 text-emerald-700 border-emerald-200' if student.active else 'bg-red-50 text-red-700 border-red-200' }}">
+                            {{ 'Aktif' if student.active else 'Non-Aktif' }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <!-- 
+                            <a href="{{ url_for('students.detail', id=student.id) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition border border-transparent hover:border-blue-100" title="Detail">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </a>
+                            -->
+                            <form action="{{ url_for('students.delete', id=student.id) }}" method="post"
+                                onsubmit="return confirm('Hapus data santri {{ student.name }}? Data nilai juga akan terhapus!');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit"
+                                    class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition border border-transparent hover:border-red-100"
+                                    title="Hapus Data">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="px-6 py-20 text-center text-gray-400 bg-gray-50/50">
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                <i data-lucide="folder-x" class="w-8 h-8 text-gray-300"></i>
+                            </div>
+                            <p class="text-lg font-medium text-gray-500">Belum ada data santri</p>
+                            <p class="text-sm text-gray-400 mb-6">Silakan tambahkan data santri baru untuk memulai.</p>
+                            <a href="{{ url_for('students.add') }}"
+                                class="text-teal-600 hover:text-teal-700 font-bold text-sm hover:underline">
+                                + Tambah Santri Baru
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if students.pages > 1 %}
+    <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center sticky bottom-0">
+        <span class="text-sm text-gray-500 font-medium">Halaman {{ students.page }} dari {{ students.pages }}</span>
+        <div class="flex gap-2">
+            {% if students.has_prev %}
+            <a href="{{ url_for('students.index', page=students.prev_num) }}"
+                class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium transition shadow-sm text-gray-700">
+                &larr; Sebelumnya
+            </a>
+            {% endif %}
+            {% if students.has_next %}
+            <a href="{{ url_for('students.index', page=students.next_num) }}"
+                class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium transition shadow-sm text-gray-700">
+                Selanjutnya &rarr;
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

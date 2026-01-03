@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Raport - Al Barokah</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar for sidebar */
+        aside::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        aside::-webkit-scrollbar-track {
+            background: #134e4a;
+        }
+
+        aside::-webkit-scrollbar-thumb {
+            background: #2dd4bf;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 h-screen flex overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside
+        class="w-64 bg-teal-800 text-white flex-shrink-0 hidden md:flex flex-col transition-all duration-300 shadow-xl z-20"
+        id="sidebar">
+        <!-- Brand -->
+        <div class="h-16 flex items-center px-6 bg-teal-900 border-b border-teal-700 shadow-sm">
+            <div class="flex items-center gap-2">
+                <div class="bg-white p-1 rounded-full"><i data-lucide="book-open" class="text-teal-800 w-5 h-5"></i>
+                </div>
+                <span class="text-lg font-bold tracking-wide">AL BAROKAH</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard.index') }}"
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint == 'dashboard.index' else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                <i data-lucide="layout-dashboard"
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint == 'dashboard.index' else 'text-teal-300 group-hover:text-white' }}"></i>
+                Dashboard
+            </a>
+
+            <div class="pt-5 pb-2 pl-3 text-xs font-bold text-teal-400 uppercase tracking-wider">Akademik</div>
+
+            <a href="{{ url_for('students.index') }}"
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint.startswith('students') else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                <i data-lucide="users"
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint.startswith('students') else 'text-teal-300 group-hover:text-white' }}"></i>
+                Data Santri
+            </a>
+            <a href="{{ url_for('grades.index') }}"
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint == 'grades.index' else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                <i data-lucide="file-edit"
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint == 'grades.index' else 'text-teal-300 group-hover:text-white' }}"></i>
+                Input Nilai
+            </a>
+            <a href="{{ url_for('grades.extras') }}"
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint == 'grades.extras' else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                <i data-lucide="clipboard-list"
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint == 'grades.extras' else 'text-teal-300 group-hover:text-white' }}"></i>
+                Input Wali Kelas
+            </a>
+
+            <div class="pt-5 pb-2 pl-3 text-xs font-bold text-teal-400 uppercase tracking-wider">Laporan</div>
+
+            <a href="{{ url_for('reports.index') }}"
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint.startswith('reports') else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                <i data-lucide="printer"
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint.startswith('reports') else 'text-teal-300 group-hover:text-white' }}"></i>
+                Cetak Raport
+            </a>
+
+            <div class="pt-5 pb-2 pl-3 text-xs font-bold text-teal-400 uppercase tracking-wider">Sistem</div>
+
+            <a href="{{ url_for('settings.index') }}"
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint and request.endpoint.startswith('settings') else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                <i data-lucide="settings"
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint and request.endpoint.startswith('settings') else 'text-teal-300 group-hover:text-white' }}"></i>
+                Pengaturan
+            </a>
+            {% else %}
+            <div class="px-4 py-8 text-center">
+                <div class="bg-teal-900/50 rounded-lg p-4 border border-teal-700">
+                    <i data-lucide="lock" class="w-8 h-8 mx-auto text-teal-300 mb-2"></i>
+                    <p class="text-sm text-teal-100">Silakan login untuk mengakses fitur aplikasi.</p>
+                </div>
+            </div>
+            {% endif %}
+        </nav>
+
+        <!-- User Profile (Bottom Sidebar) -->
+        <div class="p-4 bg-teal-900 border-t border-teal-700">
+            {% if current_user.is_authenticated %}
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-400 to-emerald-400 flex items-center justify-center text-teal-900 font-bold shadow-lg ring-2 ring-teal-700 text-lg">
+                    {{ current_user.username[0]|upper }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-white truncate">{{ current_user.username }}</p>
+                    <p class="text-xs text-teal-400 truncate">Administrator</p>
+                </div>
+                <a href="{{ url_for('auth.logout') }}"
+                    class="text-teal-300 hover:text-white p-2 hover:bg-teal-800 rounded-full transition" title="Logout">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                </a>
+            </div>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}"
+                class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-bold bg-white text-teal-800 rounded-lg hover:bg-teal-50 transition shadow-lg">
+                <i data-lucide="log-in" class="w-4 h-4 mr-2"></i> Login Aplikasi
+            </a>
+            {% endif %}
+        </div>
+    </aside>
+
+    <!-- CONTENT WRAPPER -->
+    <div class="flex-1 flex flex-col overflow-hidden relative">
+
+        <!-- HEADER -->
+        <header class="h-16 bg-white border-b flex items-center justify-between px-6 z-10 w-full shadow-sm">
+            <div class="flex items-center gap-4">
+                <button class="md:hidden text-gray-500 hover:text-teal-700 p-1 rounded-md hover:bg-gray-100 transition"
+                    onclick="document.getElementById('sidebar').classList.toggle('hidden'); document.getElementById('sidebar').classList.toggle('absolute'); document.getElementById('sidebar').classList.toggle('h-full'); ">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+
+                <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <span class="text-teal-600">{% block title_icon %}{% endblock %}</span>
+                    {% block title %}Dashboard{% endblock %}
+                </h1>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <!-- Info Tahun Ajaran -->
+                <div class="hidden md:flex flex-col items-end mr-2">
+                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tahun Ajaran</span>
+                    <span class="text-sm font-bold text-teal-700">{{ get_setting('academic_year', '2024/2025') }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN SCROLL AREA -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50/50 p-6 scroll-smooth">
+
+            <!-- FLASH MESSAGES -->
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="max-w-4xl mx-auto mb-8 animate-fade-in-down">
+                {% for message in messages %}
+                <div class="flex items-center bg-white border-l-4 border-teal-500 text-gray-700 px-4 py-3 shadow-md rounded-r-lg mb-3"
+                    role="alert">
+                    <i data-lucide="info" class="w-5 h-5 text-teal-500 mr-3"></i>
+                    <span class="font-medium">{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- PAGE CONTENT BLOCK -->
+            <div class="min-h-[80vh]">
+                {% block content %}{% endblock %}
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="mt-8 py-6 border-t border-gray-200 text-center">
+                <p class="text-sm text-gray-500">
+                    &copy; 2024 <span class="font-semibold text-teal-600">MDT Al Barokah</span>. Sistem Raport Digital
+                    v1.0
+                </p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- ICON INIT SCRIPT -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+{% extends "layouts/base.html" %}
+
+{% block title_icon %}<i data-lucide="clipboard-list"></i>{% endblock %}
+{% block title %}Input Wali Kelas{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-xl shadow-sm border border-gray-100">
+    <div
+        class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h2 class="text-lg font-bold text-gray-800">Catatan & Kehadiran</h2>
+            <p class="text-sm text-gray-500">Edit data non-akademik (Semester 1)</p>
+        </div>
+
+        <div class="bg-yellow-50 text-yellow-800 text-xs px-3 py-2 rounded-lg border border-yellow-200">
+            <i data-lucide="alert-circle" class="w-3 h-3 inline mr-1"></i>
+            Pastikan disimpan sebelum pindah halaman.
+        </div>
+    </div>
+
+    <form method="post" class="p-6">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="overflow-x-auto border rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-10">No
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-64">
+                            Nama Santri</th>
+                        <th class="px-2 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-20">
+                            Sakit</th>
+                        <th class="px-2 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-20">
+                            Izin</th>
+                        <th class="px-2 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-20">
+                            Alpa</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Catatan
+                            Wali Kelas</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for s in students %}
+                    {% set r = records.get(s.id) %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2 text-sm text-gray-500 text-center">{{ loop.index }}</td>
+                        <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ s.name }}</td>
+
+                        <td class="px-2 py-2">
+                            <input type="number" name="s_{{s.id}}_sakit" value="{{ r.attendance_sakit if r else 0 }}"
+                                class="w-full text-center border-gray-300 rounded focus:ring-teal-500 focus:border-teal-500 text-sm p-1 border">
+                        </td>
+                        <td class="px-2 py-2">
+                            <input type="number" name="s_{{s.id}}_izin" value="{{ r.attendance_izin if r else 0 }}"
+                                class="w-full text-center border-gray-300 rounded focus:ring-teal-500 focus:border-teal-500 text-sm p-1 border">
+                        </td>
+                        <td class="px-2 py-2">
+                            <input type="number" name="s_{{s.id}}_alpa" value="{{ r.attendance_alpa if r else 0 }}"
+                                class="w-full text-center border-gray-300 rounded focus:ring-teal-500 focus:border-teal-500 text-sm p-1 border">
+                        </td>
+
+                        <td class="px-4 py-2">
+                            <input type="text" name="s_{{s.id}}_notes" value="{{ r.notes if r else '' }}"
+                                class="w-full border-gray-300 rounded focus:ring-teal-500 focus:border-teal-500 text-sm p-1 px-3 border"
+                                placeholder="Tulis catatan...">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 flex justify-end">
+            <button type="submit"
+                class="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-lg font-bold shadow-md flex items-center transition">
+                <i data-lucide="save" class="w-5 h-5 mr-2"></i> Simpan Perubahan
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

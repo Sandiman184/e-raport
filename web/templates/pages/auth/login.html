@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistem Raport Al Barokah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-teal-900 to-gray-900 h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all duration-300">
+        <!-- Header -->
+        <div class="bg-teal-50 p-8 text-center border-b border-teal-100">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white text-teal-700 mb-4 shadow-md border border-teal-100">
+                <i data-lucide="book-open" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 tracking-tight">E-Raport Al Barokah</h2>
+            <p class="text-gray-500 text-sm mt-1">Sistem Informasi Penilaian Santri</p>
+        </div>
+
+        <!-- Form -->
+        <div class="p-8 pt-6">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <div
+                class="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded text-sm mb-6 flex items-start shadow-sm">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-3 flex-shrink-0"></i>
+                <span class="font-medium">{{ message }}</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-5">
+                <!-- CSRF TOKEN IS MANDATORY -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2 ml-1" for="username">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </div>
+                        <input
+                            class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all font-medium text-gray-800"
+                            id="username" name="username" type="text" placeholder="Masukkan username" required autofocus
+                            autocomplete="username">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2 ml-1" for="password">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <i data-lucide="lock" class="w-5 h-5"></i>
+                        </div>
+                        <input
+                            class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all font-medium text-gray-800"
+                            id="password" name="password" type="password" placeholder="••••••••" required
+                            autocomplete="current-password">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button
+                        class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
+                        type="submit">
+                        <span class="text-lg">Masuk Sistem</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-50 border-t border-gray-100 p-4 text-center">
+            <p class="text-xs text-gray-400">&copy; 2024 MDT Al Barokah. v1.0 Release</p>
+        </div>
+    </div>
+
+    <script> lucide.createIcons(); </script>
+</body>
+
+</html>
