@@ -1,7 +1,7 @@
 from flask import render_template, request, flash, redirect, url_for, send_file, current_app
 from flask_login import login_required, current_user
 from . import settings_bp
-from app.models import Setting, Grade, ReportRecord
+from app.models import Setting, Grade, ReportRecord, Subject
 from app.core.extensions import db
 from sqlalchemy import text
 from app.services.backup_service import BackupService
@@ -185,4 +185,78 @@ def index():
     
     # If not POST or if fall through (analyze_prune), render template
     return render_template('pages/settings/index.html', Setting=Setting, backups=backups, years=years, impact_data=impact_data, estimates=estimates)
+
+
+# --- SUBJECT MANAGEMENT ROUTES ---
+
+@settings_bp.route('/subjects', methods=['GET'])
+@login_required
+def subjects_index():
+    subjects = Subject.query.order_by(Subject.order, Subject.id).all()
+    return render_template('pages/settings/subjects.html', subjects=subjects)
+
+@settings_bp.route('/subjects/add', methods=['POST'])
+@login_required
+def add_subject():
+    try:
+        code = request.form.get('code')
+        name = request.form.get('name')
+        kkm = request.form.get('kkm')
+        order = request.form.get('order')
+        
+        if Subject.query.filter_by(code=code).first():
+            flash(f'Kode Mapel {code} sudah ada.', 'error')
+            return redirect(url_for('settings.subjects_index'))
+            
+        new_subject = Subject(
+            code=code,
+            name=name,
+            kkm=float(kkm) if kkm else 70.0,
+            order=int(order) if order else 0
+        )
+        db.session.add(new_subject)
+        db.session.commit()
+        flash('Mata pelajaran berhasil ditambahkan.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Gagal menambah mapel: {str(e)}', 'error')
+        
+    return redirect(url_for('settings.subjects_index'))
+
+@settings_bp.route('/subjects/edit/<int:id>', methods=['POST'])
+@login_required
+def edit_subject(id):
+    subject = Subject.query.get_or_404(id)
+    try:
+        subject.code = request.form.get('code')
+        subject.name = request.form.get('name')
+        subject.kkm = float(request.form.get('kkm'))
+        subject.order = int(request.form.get('order'))
+        
+        db.session.commit()
+        flash('Mata pelajaran berhasil diperbarui.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Gagal update mapel: {str(e)}', 'error')
+        
+    return redirect(url_for('settings.subjects_index'))
+
+@settings_bp.route('/subjects/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_subject(id):
+    subject = Subject.query.get_or_404(id)
+    try:
+        # Warning: cascading delete might happen or error if constraints exist
+        # Check if grades exist
+        if subject.grades.count() > 0:
+             flash('Tidak dapat menghapus mapel karena sudah ada data nilai terkait.', 'error')
+        else:
+            db.session.delete(subject)
+            db.session.commit()
+            flash('Mata pelajaran berhasil dihapus.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Gagal menghapus mapel: {str(e)}', 'error')
+        
+    return redirect(url_for('settings.subjects_index'))
 

@@ -31,3 +31,35 @@ def logout():
     logout_user()
     flash('You have been logged out.')
     return redirect(url_for('auth.login'))
+
+@auth_bp.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    if request.method == 'POST':
+        old_password = request.form.get('old_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        
+        if not current_user.check_password(old_password):
+            flash('Password lama salah.', 'error')
+            return redirect(url_for('auth.change_password'))
+            
+        if new_password != confirm_password:
+            flash('Konfirmasi password baru tidak cocok.', 'error')
+            return redirect(url_for('auth.change_password'))
+            
+        if len(new_password) < 6:
+            flash('Password baru minimal 6 karakter.', 'error')
+            return redirect(url_for('auth.change_password'))
+            
+        try:
+            current_user.set_password(new_password)
+            from app.core.extensions import db
+            db.session.commit()
+            flash('Password berhasil diubah. Silakan login kembali.', 'success')
+            logout_user()
+            return redirect(url_for('auth.login'))
+        except Exception as e:
+            flash(f'Gagal mengubah password: {str(e)}', 'error')
+            
+    return render_template('pages/auth/change_password.html')
