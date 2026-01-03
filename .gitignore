@@ -3,4 +3,5 @@ __pycache__/
 env/
 .env
 storage/*.sqlite
+storage/backups/*.sqlite
 *.log

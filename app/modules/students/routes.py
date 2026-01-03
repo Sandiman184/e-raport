@@ -1,7 +1,6 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from . import students_bp
 from app.models import Student
-
 from flask_login import login_required
 
 @students_bp.route('/')
@@ -49,6 +48,39 @@ def add():
         return redirect(url_for('students.index'))
         
     return render_template('pages/students/form.html')
+
+@students_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit(id):
+    from app.core.extensions import db
+    student = Student.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        nis = request.form.get('nis')
+        gender = request.form.get('gender')
+        
+        # Simple Validation
+        if not name or not nis:
+            return render_template('pages/students/form.html', student=student, error="Nama dan NIS wajib diisi.")
+            
+        # Check duplicate if NIS changed
+        if nis != student.nis:
+            if Student.query.filter_by(nis=nis).first():
+                 return render_template('pages/students/form.html', student=student, error="NIS sudah terdaftar.")
+        
+        student.name = name
+        student.nis = nis
+        student.nism = nis # Assume NISM follows NIS for now
+        student.gender = gender
+        
+        db.session.commit()
+        flash('Data siswa berhasil diperbarui.', 'success')
+        
+        # Pertahankan context: tetap di halaman edit
+        return redirect(url_for('students.edit', id=id))
+        
+    return render_template('pages/students/form.html', student=student)
 
 @students_bp.route('/delete/<int:id>', methods=['POST'])
 @login_required

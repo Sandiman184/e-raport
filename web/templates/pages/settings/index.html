@@ -163,9 +163,48 @@
             <div class="space-y-6">
                 <!-- Create Backup -->
                 <div class="bg-orange-50/50 p-4 rounded-lg border border-orange-100">
-                    <form method="post" class="space-y-2">
+                    <form method="post" class="space-y-3" id="backupForm">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <label class="block text-sm font-medium text-gray-800">Buat Backup Baru</label>
+                        
+                        <!-- Scope Selection -->
+                        <div class="grid grid-cols-2 gap-4 mb-2">
+                            <label class="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-white border border-transparent hover:border-orange-200 transition">
+                                <input type="radio" name="backup_scope" value="full" checked class="text-orange-600 focus:ring-orange-500" onchange="toggleBackupYear(false)">
+                                <div class="text-sm">
+                                    <span class="font-semibold block text-gray-700">Semua Data</span>
+                                    <span class="text-xs text-gray-500">
+                                        {% if estimates and estimates.full %}
+                                        Size: {{ estimates.full.size_fmt }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-white border border-transparent hover:border-orange-200 transition">
+                                <input type="radio" name="backup_scope" value="year" class="text-orange-600 focus:ring-orange-500" onchange="toggleBackupYear(true)">
+                                <div class="text-sm">
+                                    <span class="font-semibold block text-gray-700">Per Tahun Ajar</span>
+                                    <span class="text-xs text-gray-500">Pilih tahun spesifik</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Year Select (Hidden by default) -->
+                        <div id="backupYearContainer" class="hidden">
+                            <select name="backup_year" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white mb-2 focus:ring-orange-500 focus:border-orange-500">
+                                <option value="">-- Pilih Tahun --</option>
+                                {% if estimates and estimates.years %}
+                                    {% for y, est in estimates.years.items() %}
+                                    <option value="{{ y }}">{{ y }} (Est: {{ est.size_fmt }})</option>
+                                    {% endfor %}
+                                {% else %}
+                                    {% for y in years %}
+                                    <option value="{{ y }}">{{ y }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+
                         <div class="flex gap-2">
                             <input type="text" name="backup_desc" placeholder="Catatan (opsional)..."
                                 class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 bg-white">
@@ -174,6 +213,31 @@
                                 <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Backup
                             </button>
                         </div>
+                    </form>
+                </div>
+
+                <script>
+                function toggleBackupYear(show) {
+                    const container = document.getElementById('backupYearContainer');
+                    if (show) container.classList.remove('hidden');
+                    else container.classList.add('hidden');
+                }
+                </script>
+
+                <!-- Import Data Siswa -->
+                <div class="bg-green-50/50 p-4 rounded-lg border border-green-100">
+                    <form method="post" enctype="multipart/form-data" class="space-y-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <label class="block text-sm font-medium text-gray-800">Import Data Siswa (CSV/Excel)</label>
+                        <div class="flex gap-2 items-center">
+                            <input type="file" name="import_file" accept=".csv, .xlsx, .xls" required
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 bg-white border border-gray-200 rounded-lg cursor-pointer">
+                            <button type="submit" name="action" value="import_students"
+                                class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 whitespace-nowrap flex items-center shadow-sm">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-2"></i> Import
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">*Kolom wajib: Nama, NIS, Gender (L/P). Mendukung .csv, .xlsx.</p>
                     </form>
                 </div>
 
@@ -191,7 +255,7 @@
                                 <i data-lucide="upload-cloud" class="w-4 h-4 mr-2"></i> Import
                             </button>
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">*Format file wajib .sqlite. Backup otomatis akan dibuat sebelum restore.</p>
+                        <p class="text-xs text-gray-500 mt-1">*Format file wajib .sqlite. Sistem akan memverifikasi integritas file sebelum restore. Database saat ini akan ditimpa.</p>
                     </form>
                 </div>
 
@@ -284,46 +348,127 @@
 
             <div class="space-y-6">
                 <!-- Prune Data -->
-                <div class="bg-white p-5 rounded-lg border border-red-100 shadow-sm">
+                <div class="bg-white p-5 rounded-lg border border-red-100 shadow-sm" id="prune-section">
                     <h4 class="text-md font-bold text-gray-800 mb-2">Hapus Data Tahunan (Prune)</h4>
                     <p class="text-sm text-gray-600 mb-4 leading-relaxed">
                         Fitur ini akan menghapus seluruh data <strong>Nilai Santri</strong> dan <strong>Laporan</strong> untuk tahun ajaran yang dipilih. 
                         Data Profil Santri tidak akan dihapus.
                     </p>
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4">
-                        <p class="text-xs text-yellow-700">
-                            <strong>Note:</strong> Sistem akan otomatis membuat backup database sebelum penghapusan dimulai.
-                        </p>
-                    </div>
-                    
-                    <form method="post" class="space-y-3" onsubmit="return confirm('PERINGATAN TERAKHIR:\n\nAnda akan menghapus data nilai untuk tahun ajaran yang dipilih.\nTindakan ini bersifat permanen (kecuali restore backup).\n\nKetik YES di kotak konfirmasi untuk melanjutkan.');">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        
-                        <div class="space-y-2">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase">1. Pilih Tahun Ajaran</label>
-                            <select name="prune_year" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-red-500 focus:border-red-500">
-                                <option value="">-- Pilih Tahun --</option>
-                                {% if years %}
-                                    {% for y in years %}
-                                        <option value="{{ y }}">{{ y }}</option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option value="2023/2024">2023/2024</option>
-                                    <option value="2024/2025">2024/2025</option>
-                                    <option value="2025/2026">2025/2026</option>
-                                {% endif %}
-                            </select>
+
+                    {% if impact_data %}
+                        <!-- STEP 2: IMPACT ANALYSIS & CONFIRMATION -->
+                        <div class="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                            <h5 class="text-sm font-bold text-red-800 mb-2 flex items-center">
+                                <i data-lucide="alert-octagon" class="w-4 h-4 mr-2"></i> Hasil Analisis Dampak
+                            </h5>
+                            <div class="space-y-1 mb-3">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-600">Target Tahun:</span>
+                                    <span class="font-mono font-bold text-gray-800">{{ impact_data.year }}</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-600">Nilai Santri:</span>
+                                    <span class="font-mono font-bold text-red-600">-{{ impact_data.grades_count }} data</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-600">Arsip Laporan:</span>
+                                    <span class="font-mono font-bold text-red-600">-{{ impact_data.reports_count }} data</span>
+                                </div>
+                                <div class="flex justify-between text-sm pt-2 border-t border-red-100">
+                                    <span class="text-gray-600">Tingkat Risiko:</span>
+                                    <span class="badge badge-sm bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded">{{ impact_data.risk_level }}</span>
+                                </div>
+                            </div>
+                            
+                            <ul class="list-disc list-inside text-xs text-red-600 mb-3 space-y-1">
+                                {% for detail in impact_data.details %}
+                                    <li>{{ detail }}</li>
+                                {% endfor %}
+                            </ul>
+
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-2 mb-3">
+                                <p class="text-xs text-yellow-700">
+                                    <strong>Backup Otomatis:</strong> Sistem akan membuat backup sebelum penghapusan.
+                                </p>
+                            </div>
                         </div>
 
-                        <div class="space-y-2">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase">2. Konfirmasi Keamanan</label>
-                            <input type="text" name="confirm_prune" placeholder="Ketik 'YES' untuk konfirmasi" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-red-500 focus:border-red-500">
+                        <form method="post" class="space-y-3">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="prune_year" value="{{ impact_data.year }}">
+                            
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold text-gray-500 uppercase">Konfirmasi Final</label>
+                                <input type="text" name="confirm_prune" placeholder="Ketik 'YES' untuk menghapus" required
+                                    class="w-full px-3 py-2 border border-red-300 rounded-lg text-sm focus:ring-red-500 focus:border-red-500 bg-red-50 text-red-700 placeholder-red-300">
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <a href="{{ url_for('settings.index') }}" class="flex-1 px-4 py-2.5 bg-gray-200 text-gray-700 text-sm font-bold rounded-lg hover:bg-gray-300 transition text-center">
+                                    Batal
+                                </a>
+                                <button type="submit" name="action" value="prune"
+                                    class="flex-1 px-4 py-2.5 bg-red-600 text-white text-sm font-bold rounded-lg hover:bg-red-700 transition shadow-md flex justify-center items-center">
+                                    <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i> Hapus Permanen
+                                </button>
+                            </div>
+                        </form>
+
+                    {% else %}
+                        <!-- STEP 1: SELECT YEAR & ANALYZE -->
+                        <form method="post" class="space-y-3">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold text-gray-500 uppercase">Pilih Tahun Ajaran</label>
+                                <select name="prune_year" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-red-500 focus:border-red-500">
+                                    <option value="">-- Pilih Tahun --</option>
+                                    {% if years %}
+                                        {% for y in years %}
+                                            <option value="{{ y }}">{{ y }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option value="2023/2024">2023/2024</option>
+                                        <option value="2024/2025">2024/2025</option>
+                                        <option value="2025/2026">2025/2026</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            
+                            <button type="submit" name="action" value="analyze_prune"
+                                class="w-full mt-2 px-4 py-2.5 bg-white border border-red-200 text-red-600 text-sm font-bold rounded-lg hover:bg-red-50 transition flex justify-center items-center">
+                                <i data-lucide="search" class="w-4 h-4 mr-2"></i> Analisis Dampak
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+
+                <!-- Reset Data (New) -->
+                <div class="bg-white p-5 rounded-lg border border-red-100 shadow-sm mt-4">
+                    <h4 class="text-md font-bold text-red-800 mb-2">Reset Total Data Akademik</h4>
+                    <div class="text-sm text-red-600 mb-4 leading-relaxed bg-red-50 p-3 rounded border border-red-100">
+                        <strong>PERINGATAN:</strong> Fitur ini akan menghapus <u>SELURUH</u> data:
+                        <ul class="list-disc list-inside mt-1 ml-1">
+                            <li>Data Siswa (Profil & Identitas)</li>
+                            <li>Data Nilai (Semua Semester)</li>
+                            <li>Arsip Laporan/Raport</li>
+                        </ul>
+                        <span class="block mt-2 font-medium">Akun Pengguna dan Pengaturan Sekolah TIDAK akan dihapus.</span>
+                    </div>
+                    
+                    <form method="post" class="space-y-3">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="space-y-1">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase">Konfirmasi Keamanan</label>
+                            <input type="text" name="confirm_reset" placeholder='Ketik "RESET DATA"' required
+                                class="w-full px-3 py-2 border border-red-300 rounded-lg text-sm focus:ring-red-500 focus:border-red-500 placeholder-red-200">
                         </div>
                         
-                        <button type="submit" name="action" value="prune"
-                            class="w-full mt-2 px-4 py-2.5 bg-red-600 text-white text-sm font-bold rounded-lg hover:bg-red-700 transition shadow-md flex justify-center items-center">
-                            <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i> Eksekusi Penghapusan Data
+                        <button type="submit" name="action" value="reset_data"
+                            class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-bold shadow-md transition flex justify-center items-center"
+                            onclick="return confirm('PERINGATAN TERAKHIR!\n\nAnda akan menghapus SEMUA DATA SISWA DAN NILAI.\nTindakan ini TIDAK DAPAT DIBATALKAN.\n\nSistem akan mencoba membuat backup otomatis sebelum reset.\n\nLanjutkan?');">
+                            <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i> Hapus Semua Data
                         </button>
                     </form>
                 </div>

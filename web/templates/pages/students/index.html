@@ -70,11 +70,11 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
-                            <!-- 
-                            <a href="{{ url_for('students.detail', id=student.id) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition border border-transparent hover:border-blue-100" title="Detail">
-                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            <a href="{{ url_for('students.edit', id=student.id) }}" 
+                                class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition border border-transparent hover:border-blue-100" 
+                                title="Edit Data">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
                             </a>
-                            -->
                             <form action="{{ url_for('students.delete', id=student.id) }}" method="post"
                                 onsubmit="return confirm('Hapus data santri {{ student.name }}? Data nilai juga akan terhapus!');">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

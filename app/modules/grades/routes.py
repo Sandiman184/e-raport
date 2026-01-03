@@ -26,6 +26,9 @@ def edit():
     if request.method == 'POST':
         # Handle Batch Update
         try:
+            from app.models.setting import Setting
+            current_year = Setting.get_value('academic_year', '2024/2025')
+            
             count_updated = 0
             for student in students:
                 prefix = f"s_{student.id}_"
@@ -55,11 +58,11 @@ def edit():
                     student_id=student.id,
                     subject_id=subject.id,
                     semester=semester,
-                    year='2024/2025'
+                    year=current_year
                 ).first()
                 
                 if not g:
-                    g = Grade(student_id=student.id, subject_id=subject.id, semester=semester, year='2024/2025')
+                    g = Grade(student_id=student.id, subject_id=subject.id, semester=semester, year=current_year)
                     db.session.add(g)
                 
                 g.nh = nh_val
@@ -79,8 +82,10 @@ def edit():
     
     # Pre-fetch existing grades for display
     # Dict mapping student_id -> GradeObj
+    from app.models.setting import Setting
+    current_year = Setting.get_value('academic_year', '2024/2025')
     existing_grades = {}
-    grades_q = Grade.query.filter_by(subject_id=subject.id, semester=semester, year='2024/2025').all()
+    grades_q = Grade.query.filter_by(subject_id=subject.id, semester=semester, year=current_year).all()
     for g in grades_q:
         existing_grades[g.student_id] = g
     
@@ -135,6 +140,8 @@ def extras():
             
     # Fetch existing data to populate form
     from app.models import ReportRecord
-    records = {r.student_id: r for r in ReportRecord.query.filter_by(semester=1, year='2024/2025').all()}
+    from app.models.setting import Setting
+    current_year = Setting.get_value('academic_year', '2024/2025')
+    records = {r.student_id: r for r in ReportRecord.query.filter_by(semester=1, year=current_year).all()}
     
     return render_template('pages/grades/extras.html', students=students, records=records)

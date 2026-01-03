@@ -22,11 +22,14 @@ def print_report(student_id):
     subjects = Subject.query.order_by(Subject.order, Subject.id).all()
     
     # Get Grades
-    grades_q = Grade.query.filter_by(student_id=student_id, semester=semester, year='2024/2025').all()
+    from app.models.setting import Setting
+    current_year = Setting.get_value('academic_year', '2024/2025')
+    
+    grades_q = Grade.query.filter_by(student_id=student_id, semester=semester, year=current_year).all()
     grades = {g.subject_id: g for g in grades_q}
         
     # Extra Records (Attendance, Notes, JSONs)
-    rr = ReportRecord.query.filter_by(student_id=student_id, semester=semester, year='2024/2025').first()
+    rr = ReportRecord.query.filter_by(student_id=student_id, semester=semester, year=current_year).first()
     
     # Default empty structure if not found
     record = rr if rr else ReportRecord(
