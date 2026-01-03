@@ -88,12 +88,21 @@
                 Cetak Raport
             </a>
 
+            <div class="pt-5 pb-2 pl-3 text-xs font-bold text-teal-400 uppercase tracking-wider">Kurikulum</div>
+
+            <a href="{{ url_for('settings.subjects_index') }}"
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint == 'settings.subjects_index' else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                <i data-lucide="book-open"
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint == 'settings.subjects_index' else 'text-teal-300 group-hover:text-white' }}"></i>
+                Mata Pelajaran
+            </a>
+
             <div class="pt-5 pb-2 pl-3 text-xs font-bold text-teal-400 uppercase tracking-wider">Sistem</div>
 
             <a href="{{ url_for('settings.index') }}"
-                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint and request.endpoint.startswith('settings') else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
+                class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ 'bg-teal-700 text-white shadow-sm' if request.endpoint == 'settings.index' else 'text-teal-100 hover:bg-teal-700 hover:text-white' }}">
                 <i data-lucide="settings"
-                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint and request.endpoint.startswith('settings') else 'text-teal-300 group-hover:text-white' }}"></i>
+                    class="w-5 h-5 mr-3 {{ 'text-white' if request.endpoint == 'settings.index' else 'text-teal-300 group-hover:text-white' }}"></i>
                 Pengaturan
             </a>
             {% else %}

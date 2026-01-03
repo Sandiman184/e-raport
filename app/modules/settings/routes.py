@@ -260,3 +260,48 @@ def delete_subject(id):
         
     return redirect(url_for('settings.subjects_index'))
 
+@settings_bp.route('/subjects/seed-defaults', methods=['POST'])
+@login_required
+def seed_default_subjects():
+    """Seed default subjects for Al Barokah Madrasah"""
+    try:
+        # Default subjects for Islamic school
+        default_subjects = [
+            {'code': 'MP1', 'name': 'Al-Qur\'an', 'kkm': 70.0, 'order': 1},
+            {'code': 'MP2', 'name': 'Tajwid', 'kkm': 70.0, 'order': 2},
+            {'code': 'MP3', 'name': 'Tahfidz', 'kkm': 70.0, 'order': 3},
+            {'code': 'MP4', 'name': 'Fiqih', 'kkm': 70.0, 'order': 4},
+            {'code': 'MP5', 'name': 'Aqidah Akhlak', 'kkm': 70.0, 'order': 5},
+            {'code': 'MP6', 'name': 'Hadits', 'kkm': 70.0, 'order': 6},
+            {'code': 'MP7', 'name': 'Sejarah Islam', 'kkm': 70.0, 'order': 7},
+            {'code': 'MP8', 'name': 'Bahasa Arab', 'kkm': 70.0, 'order': 8},
+            {'code': 'MP9', 'name': 'Imla\'', 'kkm': 70.0, 'order': 9},
+            {'code': 'MP10', 'name': 'Khot', 'kkm': 70.0, 'order': 10},
+        ]
+        
+        count_added = 0
+        count_skipped = 0
+        
+        for subject_data in default_subjects:
+            # Check if already exists
+            existing = Subject.query.filter_by(code=subject_data['code']).first()
+            if existing:
+                count_skipped += 1
+                continue
+                
+            new_subject = Subject(**subject_data)
+            db.session.add(new_subject)
+            count_added += 1
+        
+        db.session.commit()
+        
+        if count_added > 0:
+            flash(f'Berhasil menambahkan {count_added} mata pelajaran default. {count_skipped} sudah ada.', 'success')
+        else:
+            flash('Semua mata pelajaran default sudah ada dalam sistem.', 'info')
+            
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Gagal menambahkan mata pelajaran default: {str(e)}', 'error')
+        
+    return redirect(url_for('settings.subjects_index'))

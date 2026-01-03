@@ -14,14 +14,36 @@
     </div>
 
     <form action="{{ url_for('grades.edit') }}" method="get" class="space-y-6">
+        {% if not has_subjects %}
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg mb-6">
+            <div class="flex items-start">
+                <i data-lucide="alert-triangle" class="w-6 h-6 text-yellow-600 mr-3 flex-shrink-0 mt-0.5"></i>
+                <div class="flex-1">
+                    <h3 class="font-bold text-yellow-800 mb-2">Belum Ada Mata Pelajaran</h3>
+                    <p class="text-sm text-yellow-700 mb-3">
+                        Anda perlu menambahkan mata pelajaran terlebih dahulu sebelum dapat menginput nilai.
+                    </p>
+                    <a href="{{ url_for('settings.subjects_index') }}"
+                        class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 text-sm font-bold transition shadow-sm">
+                        <i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Kelola Mata Pelajaran
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <div>
             <label class="block text-gray-700 font-bold mb-2">Mata Pelajaran</label>
             <div class="relative">
-                <select name="subject_id"
-                    class="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 appearance-none bg-white">
+                <select name="subject_id" {{ 'disabled' if not has_subjects else '' }}
+                    class="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 appearance-none bg-white {{ 'opacity-50 cursor-not-allowed' if not has_subjects else '' }}">
+                    {% if has_subjects %}
                     {% for sub in subjects %}
                     <option value="{{ sub.id }}">{{ sub.code }} - {{ sub.name }}</option>
                     {% endfor %}
+                    {% else %}
+                    <option value="">-- Belum ada mata pelajaran --</option>
+                    {% endif %}
                 </select>
                 <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
@@ -33,17 +55,19 @@
             <label class="block text-gray-700 font-bold mb-2">Semester</label>
             <div class="grid grid-cols-2 gap-4">
                 <label class="cursor-pointer">
-                    <input type="radio" name="semester" value="1" class="peer sr-only" checked>
+                    <input type="radio" name="semester" value="1" class="peer sr-only" checked {{ 'disabled' if not
+                        has_subjects else '' }}>
                     <div
-                        class="p-4 border border-gray-200 rounded-lg text-center bg-gray-50 hover:bg-gray-100 peer-checked:bg-teal-50 peer-checked:border-teal-500 peer-checked:text-teal-700 transition">
+                        class="p-4 border border-gray-200 rounded-lg text-center bg-gray-50 hover:bg-gray-100 peer-checked:bg-teal-50 peer-checked:border-teal-500 peer-checked:text-teal-700 transition {{ 'opacity-50 cursor-not-allowed' if not has_subjects else '' }}">
                         <span class="font-bold block">Semester 1</span>
                         <span class="text-xs text-gray-500">Ganjil</span>
                     </div>
                 </label>
                 <label class="cursor-pointer">
-                    <input type="radio" name="semester" value="2" class="peer sr-only">
+                    <input type="radio" name="semester" value="2" class="peer sr-only" {{ 'disabled' if not has_subjects
+                        else '' }}>
                     <div
-                        class="p-4 border border-gray-200 rounded-lg text-center bg-gray-50 hover:bg-gray-100 peer-checked:bg-teal-50 peer-checked:border-teal-500 peer-checked:text-teal-700 transition">
+                        class="p-4 border border-gray-200 rounded-lg text-center bg-gray-50 hover:bg-gray-100 peer-checked:bg-teal-50 peer-checked:border-teal-500 peer-checked:text-teal-700 transition {{ 'opacity-50 cursor-not-allowed' if not has_subjects else '' }}">
                         <span class="font-bold block">Semester 2</span>
                         <span class="text-xs text-gray-500">Genap</span>
                     </div>
@@ -51,8 +75,8 @@
             </div>
         </div>
 
-        <button type="submit"
-            class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center">
+        <button type="submit" {{ 'disabled' if not has_subjects else '' }}
+            class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center {{ 'opacity-50 cursor-not-allowed' if not has_subjects else '' }}">
             <i data-lucide="arrow-right" class="w-5 h-5 mr-2"></i> Lanjutkan ke Form Input
         </button>
     </form>

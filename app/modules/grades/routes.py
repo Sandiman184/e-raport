@@ -9,7 +9,11 @@ from app.core.extensions import db
 def index():
     # Selection page
     subjects = Subject.query.order_by(Subject.order, Subject.id).all()
-    return render_template('pages/grades/selection.html', subjects=subjects)
+    
+    # Check if no subjects exist
+    has_subjects = len(subjects) > 0
+    
+    return render_template('pages/grades/selection.html', subjects=subjects, has_subjects=has_subjects)
 
 @grades_bp.route('/edit', methods=['GET', 'POST'])
 @login_required
