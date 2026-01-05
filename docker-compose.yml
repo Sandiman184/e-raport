@@ -43,8 +43,9 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    # Use command instead of entrypoint to allow 'docker compose run' to override
-    command: sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;"
+    # Override entrypoint to allow both auto-renewal and manual runs
+    entrypoint: /bin/sh
+    command: -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;"
 
 networks:
   raport_network:
