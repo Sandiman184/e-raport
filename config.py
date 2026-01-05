@@ -28,6 +28,12 @@ class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(os.getcwd(), 'storage', 'data.sqlite')
+    
+    # Production Security Settings for HTTPS
+    SESSION_COOKIE_SECURE = True  # Require HTTPS
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    PREFERRED_URL_SCHEME = 'https'
 
 class TestingConfig(Config):
     TESTING = True

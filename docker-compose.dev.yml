@@ -1,0 +1,25 @@
+version: '3.8'
+
+# Development environment (tanpa SSL, langsung expose Flask)
+services:
+  web:
+    build: .
+    container_name: raport_dev
+    restart: unless-stopped
+    ports:
+      - "5005:8000"
+    environment:
+      - FLASK_CONFIG=development
+      - FLASK_DEBUG=1
+      - SECRET_KEY=dev-secret-key-not-for-production
+      - DATABASE_URL=sqlite:////app/storage/data-dev.sqlite
+    volumes:
+      - .:/app # Mount source code untuk live reload
+      - ./storage:/app/storage
+    command: flask run --host=0.0.0.0 --port=8000 --reload
+    networks:
+      - raport_network
+
+networks:
+  raport_network:
+    driver: bridge

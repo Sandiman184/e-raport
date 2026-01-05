@@ -5,3 +5,14 @@ env/
 storage/*.sqlite
 storage/backups/*.sqlite
 *.log
+
+# Docker & SSL
+certbot/
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
