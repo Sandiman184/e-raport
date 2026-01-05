@@ -14,6 +14,23 @@ echo -e "${GREEN}  Setup SSL Certificate dengan Certbot${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 
+# Detect Docker Compose command
+echo "Detecting Docker Compose..."
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE_CMD="docker-compose"
+    echo -e "${GREEN}✓ Using: docker-compose${NC}"
+elif docker compose version &> /dev/null; then
+    DOCKER_COMPOSE_CMD="docker compose"
+    echo -e "${GREEN}✓ Using: docker compose (plugin)${NC}"
+else
+    echo -e "${RED}✗ Docker Compose not found!${NC}"
+    echo -e "${YELLOW}Please install Docker Compose first.${NC}"
+    echo ""
+    echo "Run: ./fix-docker-compose.sh"
+    exit 1
+fi
+echo ""
+
 # Baca domain dari .env atau input manual
 if [ -f .env ]; then
     source .env
@@ -44,7 +61,7 @@ echo ""
 echo -e "${YELLOW}Step 1: Mendapatkan SSL Certificate...${NC}"
 
 # Request certificate
-docker-compose run --rm certbot certonly --webroot \
+$DOCKER_COMPOSE_CMD run --rm certbot certonly --webroot \
     --webroot-path=/var/www/certbot \
     --email $EMAIL \
     --agree-tos \
@@ -65,7 +82,7 @@ if [ $? -eq 0 ]; then
     echo ""
     
     echo -e "${YELLOW}Step 3: Restart Nginx...${NC}"
-    docker-compose restart nginx
+    $DOCKER_COMPOSE_CMD restart nginx
     
     echo -e "${GREEN}✓ Nginx restarted!${NC}"
     echo ""
@@ -76,6 +93,7 @@ if [ $? -eq 0 ]; then
     echo ""
     echo -e "${GREEN}Aplikasi Anda sekarang dapat diakses melalui:${NC}"
     echo -e "${GREEN}https://$DOMAIN${NC}"
+    echo -e "${GREEN}https://www.$DOMAIN${NC}"
     echo ""
     echo -e "${YELLOW}Catatan: Certificate akan di-renew otomatis oleh Certbot${NC}"
     
@@ -85,6 +103,6 @@ else
     echo -e "${YELLOW}Pastikan:${NC}"
     echo "1. Domain sudah pointing ke IP server ini"
     echo "2. Port 80 dan 443 terbuka"
-    echo "3. Docker containers sudah running (docker-compose up -d)"
+    echo "3. Docker containers sudah running ($DOCKER_COMPOSE_CMD ps)"
     exit 1
 fi
