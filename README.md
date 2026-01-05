@@ -32,25 +32,43 @@ Aplikasi berbasis web untuk manajemen penilaian, data santri, dan pelaporan hasi
 
 ## 🚀 Quick Start
 
+### 🌐 Production Domain
+
+**Live Application:** [https://e-raport-albarokah.online](https://e-raport-albarokah.online)
+
+---
+
 ### 🐳 Deployment dengan Docker (Recommended)
 
 **Paling mudah untuk production!** Aplikasi sudah include konfigurasi lengkap dengan Nginx dan SSL.
 
+#### Option 1: Automated Deployment (For e-raport-albarokah.online)
+
 ```bash
 # 1. Clone repository
-git clone <repository-url>
-cd web_app
+git clone https://github.com/Sandiman184/e-raport.git
+cd e-raport
+
+# 2. Run automated deployment
+chmod +x deploy-production.sh
+./deploy-production.sh
+```
+
+Script akan automatic setup semuanya termasuk SSL! 🎉
+
+#### Option 2: Manual Setup (Universal - Any Domain)
+
+```bash
+# 1. Clone repository
+git clone https://github.com/Sandiman184/e-raport.git
+cd e-raport
 
 # 2. Jalankan setup wizard
 chmod +x setup.sh
 ./setup.sh
 
-# 3. Aplikasi sudah jalan!
-# Akses: http://YOUR_DOMAIN atau http://YOUR_IP
-```
-
-**Setup SSL (jika punya domain):**
-```bash
+# 3. Setup SSL (jika punya domain)
+chmod +x setup-ssl.sh
 ./setup-ssl.sh
 ```
 
