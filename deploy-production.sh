@@ -49,10 +49,42 @@ if ! command -v docker &> /dev/null; then
     echo -e "${YELLOW}Docker not found. Installing...${NC}"
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh get-docker.sh
-    sudo apt install docker-compose -y
     echo -e "${GREEN}✓ Docker installed${NC}"
 else
     echo -e "${GREEN}✓ Docker already installed${NC}"
+fi
+
+# Check Docker Compose
+echo -e "${BLUE}[2.5/8]${NC} Checking Docker Compose..."
+if command -v docker-compose &> /dev/null; then
+    echo -e "${GREEN}✓ docker-compose found${NC}"
+    DOCKER_COMPOSE_CMD="docker-compose"
+elif docker compose version &> /dev/null; then
+    echo -e "${GREEN}✓ docker compose plugin found${NC}"
+    DOCKER_COMPOSE_CMD="docker compose"
+else
+    echo -e "${YELLOW}Docker Compose not found. Installing...${NC}"
+    
+    # Try installing via apt first (Docker Compose v2 plugin)
+    sudo apt update
+    sudo apt install docker-compose-plugin -y
+    
+    # If that doesn't work, install standalone
+    if ! docker compose version &> /dev/null; then
+        echo -e "${YELLOW}Installing standalone Docker Compose...${NC}"
+        sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+    fi
+    
+    # Set command to use
+    if command -v docker-compose &> /dev/null; then
+        DOCKER_COMPOSE_CMD="docker-compose"
+    else
+        DOCKER_COMPOSE_CMD="docker compose"
+    fi
+    
+    echo -e "${GREEN}✓ Docker Compose installed${NC}"
 fi
 
 # Step 3: Check DNS
@@ -113,7 +145,7 @@ echo -e "${GREEN}✓ Directories created${NC}"
 echo -e "${BLUE}[6/8]${NC} Building and starting containers..."
 echo -e "${YELLOW}This may take a few minutes...${NC}"
 
-docker-compose up -d --build
+$DOCKER_COMPOSE_CMD up -d --build
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Containers started${NC}"
@@ -128,7 +160,7 @@ sleep 10
 
 # Step 7: Check status
 echo -e "${BLUE}[7/8]${NC} Checking services..."
-docker-compose ps
+$DOCKER_COMPOSE_CMD ps
 echo ""
 
 # Step 8: SSL Setup
