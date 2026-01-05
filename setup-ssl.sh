@@ -60,8 +60,9 @@ fi
 echo ""
 echo -e "${YELLOW}Step 1: Mendapatkan SSL Certificate...${NC}"
 
-# Request certificate
-$DOCKER_COMPOSE_CMD run --rm certbot certonly --webroot \
+# Request certificate with proper entrypoint override
+$DOCKER_COMPOSE_CMD run --rm --entrypoint certbot certbot \
+    certonly --webroot \
     --webroot-path=/var/www/certbot \
     --email $EMAIL \
     --agree-tos \

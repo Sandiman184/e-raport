@@ -36,6 +36,8 @@ services:
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   # Certbot for SSL
+  # This container runs a renewal check loop
+  # For manual certificate requests, use: docker compose run --rm --entrypoint certbot certbot certonly ...
   certbot:
     image: certbot/certbot
     container_name: raport_certbot
@@ -43,9 +45,9 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    # Override entrypoint to allow both auto-renewal and manual runs
+    # Sleep loop - will be replaced during manual runs
     entrypoint: /bin/sh
-    command: -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;"
+    command: -c "while :; do certbot renew --quiet; sleep 12h; done"
 
 networks:
   raport_network:
