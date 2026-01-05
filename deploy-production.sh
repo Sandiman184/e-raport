@@ -65,26 +65,43 @@ elif docker compose version &> /dev/null; then
 else
     echo -e "${YELLOW}Docker Compose not found. Installing...${NC}"
     
-    # Try installing via apt first (Docker Compose v2 plugin)
-    sudo apt update
-    sudo apt install docker-compose-plugin -y
+    # Try adding Docker repository and install plugin
+    echo -e "${YELLOW}Attempting to add Docker repository...${NC}"
     
-    # If that doesn't work, install standalone
-    if ! docker compose version &> /dev/null; then
-        echo -e "${YELLOW}Installing standalone Docker Compose...${NC}"
-        sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-        sudo chmod +x /usr/local/bin/docker-compose
-        sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
-    fi
+    # Add Docker's official GPG key
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl gnupg -y
+    sudo install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg --yes 2>/dev/null
+    sudo chmod a+r /etc/apt/keyrings/docker.gpg
     
-    # Set command to use
-    if command -v docker-compose &> /dev/null; then
-        DOCKER_COMPOSE_CMD="docker-compose"
-    else
+    # Add Docker repository
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    
+    # Update and try installing plugin
+    sudo apt-get update
+    if sudo apt-get install docker-compose-plugin -y 2>/dev/null; then
+        echo -e "${GREEN}✓ Docker Compose plugin installed${NC}"
         DOCKER_COMPOSE_CMD="docker compose"
+    else
+        # Fallback to standalone binary
+        echo -e "${YELLOW}Plugin installation failed. Installing standalone Docker Compose...${NC}"
+        sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        
+        # Verify installation
+        if /usr/local/bin/docker-compose --version &> /dev/null; then
+            echo -e "${GREEN}✓ Standalone Docker Compose installed${NC}"
+            DOCKER_COMPOSE_CMD="/usr/local/bin/docker-compose"
+        else
+            echo -e "${RED}✗ Failed to install Docker Compose${NC}"
+            echo -e "${YELLOW}Please install manually and run this script again${NC}"
+            exit 1
+        fi
     fi
-    
-    echo -e "${GREEN}✓ Docker Compose installed${NC}"
 fi
 
 # Step 3: Check DNS
